@@ -83,7 +83,7 @@ class Maze:
     def search(self, Method, rules=None, print_result=True, print_queue=False):
         # searches path from start to goal position
         # Method is search.Algorithm class
-        # rules is list of MazeProductionRule objects, default is [Left(), Right(), Up(), Down()]
+        # rules is list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
         # print_result is boolean, default is True
         # print_queue is boolean, default is False
         initial_state = State(self, self.get_start_position(), rules)
@@ -186,8 +186,8 @@ class Move(state_space.Move):
     # inherits from state_space.Move
 
     def __init__(self, state, rule):
-        # state is MazeState object
-        # rule is MazeProductionRule object
+        # state is State object
+        # rule is ProductionRule object
         super().__init__(state, rule)
 
     def __repr__(self):
@@ -203,7 +203,7 @@ class State(state_space.State):
     def __init__(self, maze, position, rules=None):
         # maze is a Maze object
         # position is a Position object
-        # rules is a list of MazeProductionRule objects, default is [Left(), Right(), Up(), Down()]
+        # rules is a list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
         super().__init__([Left(), Right(), Up(), Down()] if rules is None else rules)
         self.maze = maze
         self.position = position
@@ -219,7 +219,7 @@ class State(state_space.State):
     def apply_move(self, move):
         # applies move to state self to get new state
         # move is Move object
-        # returns new MazeState object
+        # returns new State object
         new_position = Position(self.position.irow + move.rule.drow,
                                 self.position.icol + move.rule.dcol)
         return State(self.maze, new_position, self.rules)  # new state
@@ -247,7 +247,7 @@ class Path(state_space.Path):
     # inherits from state_space.Path
 
     def __init__(self, states):
-        # states is list of MazeState objects
+        # states is list of State objects
         super().__init__(states)
 
     def plot(self):
@@ -289,7 +289,7 @@ class PathSeries(state_space.PathSeries):
     # inherits from state_space.PathSeries
 
     def __init__(self, paths):
-        # paths is list of MazePath objects
+        # paths is list of Path objects
         super().__init__(paths)
 
     def __repr__(self):
