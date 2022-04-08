@@ -1,4 +1,4 @@
-import state_space
+from . import state_space
 import networkx as nx
 
 
