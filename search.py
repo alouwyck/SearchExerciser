@@ -5,10 +5,10 @@ import numpy as np
 from random import randint
 
 
-class SearchAlgorithm(ABC):
+class Algorithm(ABC):
     # abstract superclass for implementing search algorithms
 
-    name = ""  # name of algorithm (string)
+    name = "search algorithm"  # name of algorithm (string)
 
     def __init__(self, initial_queue, print_result=True, print_queue=False, depth_limit=np.Inf):
         # initial_queue is PathSeries object
@@ -91,6 +91,11 @@ class SearchAlgorithm(ABC):
         # print result
         self._print_result()
 
+    @abstractmethod
+    def _add_new_paths_to_queue(self):
+        # adds new child paths to queue
+        pass
+
     def _print_result(self):
         # prints result
         # if self.print_result is True
@@ -132,13 +137,13 @@ class SearchAlgorithm(ABC):
             print(self.path_to_goal)
             print()
 
-    @abstractmethod
-    def _add_new_paths_to_queue(self):
-        # adds new child paths to queue
-        pass
+    def __repr__(self):
+        # overrides inherited __repr__ method
+        # returns string
+        return self.name
 
 
-class DFS(SearchAlgorithm):
+class DFS(Algorithm):
     # class that implements depth-first search
 
     name = "Depth-first search"
@@ -151,7 +156,7 @@ class DFS(SearchAlgorithm):
         self._queue = self._queue_class(self._new_paths) + self._queue
 
 
-class BFS(SearchAlgorithm):
+class BFS(Algorithm):
     # class that implements breadth-first search
 
     name = "Breadth-first search"
@@ -164,7 +169,7 @@ class BFS(SearchAlgorithm):
         self._queue = self._queue + self._queue_class(self._new_paths)
 
 
-class NDS(SearchAlgorithm):
+class NDS(Algorithm):
     # class that implements non-deterministic search
 
     name = "Non-deterministic search"
@@ -180,7 +185,7 @@ class NDS(SearchAlgorithm):
             self._queue.insert(index, path)
 
 
-class IDS(SearchAlgorithm):
+class IDS(Algorithm):
     # class that implements iterative deepening search
 
     name = "Iterative deepening search"
