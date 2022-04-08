@@ -52,6 +52,15 @@ class Graph:
         method.search()
         return method.path_to_goal
 
+    @staticmethod
+    def create(nodes, edges):
+        graph = nx.Graph()
+        for node in nodes:
+            graph.add_node(node)
+        for edge in edges:
+            graph.add_edge(edge[0], edge[1])
+        return Graph(graph)
+
 
 class ProductionRule(state_space.ProductionRule):
     # class to define a graph production rule
