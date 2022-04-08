@@ -53,13 +53,18 @@ class Graph:
         return method.path_to_goal
 
     @staticmethod
-    def create(nodes, edges):
+    def create(nodes, edges, start="S", goal="G"):
+        # creates Graph object from given nodes and edges
+        # nodes is list of node names (strings)
+        # edges is list of [node1, node2] pairs
+        # start is the start node (default "S")
+        # goal is the goal node (default "G")
         graph = nx.Graph()
         for node in nodes:
             graph.add_node(node)
         for edge in edges:
             graph.add_edge(edge[0], edge[1])
-        return Graph(graph)
+        return Graph(graph, start, goal)
 
 
 class ProductionRule(state_space.ProductionRule):
