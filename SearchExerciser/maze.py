@@ -80,7 +80,7 @@ class Maze:
         plt.xlim([-0.5, xmax])
         plt.ylim([ymax, -0.5])
 
-    def search(self, Method, rules=None, print_result=True, print_queue=False):
+    def search(self, Method, heuristic=None, rules=None, print_result=True, print_queue=False):
         # searches path from start to goal position
         # Method is search.Algorithm class
         # rules is list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
@@ -88,7 +88,8 @@ class Maze:
         # print_queue is boolean, default is False
         initial_state = State(self, self.get_start_position(), rules)
         initial_path = Path([initial_state])
-        method = Method(PathSeries([initial_path]), print_result=print_result, print_queue=print_queue)
+        method = Method(PathSeries([initial_path]), heuristic=heuristic, print_result=print_result,
+                        print_queue=print_queue)
         method.search()
         return method.path_to_goal
 
@@ -236,6 +237,10 @@ class State(state_space.State):
         # returns boolean
         return self.position == other.position
 
+    def manhattan_distance(self):
+        goal_position = self.maze.get_goal_position()
+        return abs(goal_position.irow - self.position.irow) + abs(goal_position.icol - self.position.icol)
+
     def __repr__(self):
         # overrides inherited __repr__ method
         # returns string with position coordinate
@@ -301,3 +306,7 @@ class PathSeries(state_space.PathSeries):
             return '\n'.join([''.join(row) for row in arr])
         else:
             return ""
+
+
+def manhattan_distance_heuristic(state):
+    return state.manhattan_distance()

@@ -103,6 +103,10 @@ class Path(UserList):
         new_paths = [self.add(move.apply()) for move in moves if move.is_valid()]  # apply moves if they are valid
         return type(self)(new_paths)
 
+    def last_state(self):
+        # returns the last state on the path
+        return self[-1]
+
     def add(self, state):
         # adds state to path self
         # state is a State object
