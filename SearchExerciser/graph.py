@@ -2,16 +2,19 @@ from . import state_space
 import networkx as nx
 
 
-class Graph:
+class Graph(state_space.Problem):
     # class to define graph
-    # aggregates networkx.graph
+    # aggregates networkx.Graph object
 
-    def __init__(self, graph, start="S", goal="G"):
+    def __init__(self, graph, start="S", goal="G", rules=None):
         # graph is a networkx.Graph object
         #  add heurstic value as node attribute "h"
         #  add cost as edge attribute "cost"
         # start is the start node (default "S")
         # goal is the goal node (default "G")
+        # rules is a list of nodes that indicates the order in which nodes are selected
+        #  by default nodes are selected in alphabetic order
+        super().__init__(ProductionRule.create_all(graph) if rules is None else rules)
         self.graph = graph
         self.start = start
         self.goal = goal
@@ -26,6 +29,21 @@ class Graph:
         # returns self.graph.edges
         return self.graph.edges
 
+    def _get_initial_queue(self):
+        initial_state = State(self, self.start)
+        initial_path = Path([initial_state])
+        return PathSeries([initial_path])
+
+    def distance_to_goal(self, vertex):
+        # returns distance from given vertex to goal
+        # which is the vertex' attribute "h"
+        return self.graph.nodes[vertex]['h']
+
+    def get_cost(self, edge):
+        # returns the cost of given edge (tuple)
+        # which is the edge's attribute "cost"
+        return self.graph.edges[edge]['cost']
+
     def plot(self, positions):
         # plots graph
         # positions is a dictionary {node: [x, y]} where [x, y] is the node coordinate
@@ -39,30 +57,21 @@ class Graph:
         if cost:
             nx.draw_networkx_edge_labels(self.graph, positions, cost)
 
-    def search(self, Method, rules=None, print_result=True, print_queue=False):
-        # searches path from start to goal node
-        # Method is search.Algorithm class
-        # rules is list of ProductionRule objects
-        #  by default nodes are selected in alphabetic order
-        # print_result is boolean, default is True
-        # print_queue is boolean, default is False
-        initial_state = State(self, self.start, rules)
-        initial_path = Path([initial_state])
-        method = Method(PathSeries([initial_path]), print_result=print_result, print_queue=print_queue)
-        method.search()
-        return method.path_to_goal
-
     @staticmethod
-    def create(edges, start="S", goal="G"):
+    def create(edges, start="S", goal="G", heuristic=None):
         # creates Graph object from given nodes and edges
-        # edges is list of [node1, node2] pairs
+        # edges is list of [node1, node2] pairs or [node1, node2, cost] if cost is relevant
         # start is the start node (default "S")
         # goal is the goal node (default "G")
+        # heuristic is dict {node=h} with heuristic values, default is None
         graph = nx.Graph()
         for node in {node for edge in edges for node in edge}:
             graph.add_node(node)
         for edge in edges:
-            graph.add_edge(edge[0], edge[1])
+            graph.add_edge(edge[0], edge[1], cost=0 if len(edge) == 2 else edge[-1])
+        if heuristic is not None:
+            for node, h in heuristic.items():
+                graph.nodes[node]["h"] = h
         return Graph(graph, start, goal)
 
 
@@ -84,14 +93,14 @@ class ProductionRule(state_space.ProductionRule):
     @staticmethod
     def create_all(graph, reverse=False, key=None):
         # creates all possible production rules for a given graph
-        # graph is a Graph object
+        # graph is a networkx.Graph object
         # returns a list of ProductionRule objects
         # by default the vertices are sorted in ascending order (reverse=False)
         # if reverse is True, the vertices are sorted in descending order
         # it is also possible to pass a function to order the vertices
         # assign this function to parameter key, which is None by default
         # check built-in function "sorted" for more information about parameters "reverse" and "key"
-        vertices = sorted(graph.vertices, reverse=reverse, key=key)
+        vertices = sorted(graph.nodes, reverse=reverse, key=key)
         return [ProductionRule(vertex) for vertex in vertices]
 
 
@@ -103,7 +112,7 @@ class Move(state_space.Move):
         # state is a State object
         # rule is a ProductionRule object
         edge = state.graph.edges[(state.vertex, rule.next_vertex)]  # cost is a graph edge attribute
-        super().__init__(state, rule, edge["cost"] if "cost" in edge else 1)
+        super().__init__(state, rule, edge["cost"] if "cost" in edge else 0.0)
 
     def __repr__(self):
         # overrides inherited __repr__ method
@@ -115,14 +124,15 @@ class State(state_space.State):
     # class to define graph state
     # inherits from state_space.State
 
-    def __init__(self, graph, vertex, rules=None):
-        # graph is a networx.Graph object
+    def __init__(self, graph, vertex):
+        # graph is a Graph object
         # vertex is the current node in graph (string)
-        # rules is a list of ProductionRule objects
-        #  by default nodes are selected in alphabetic order
-        super().__init__(rules=ProductionRule.create_all(graph) if rules is None else rules)
-        self.graph = graph
+        super().__init__(graph)
         self.vertex = vertex
+
+    @property
+    def graph(self):
+        return self.problem
 
     def is_valid_move(self, move):
         # checks if move is valid
@@ -134,12 +144,16 @@ class State(state_space.State):
         # applies move to state self to get new state
         # move is Move object
         # returns new State object
-        return State(self.graph, move.rule.next_vertex, self.rules)
+        return State(self.graph, move.rule.next_vertex)
 
     def is_goal(self):
         # checks if state self is a goal state
         # returns boolean
         return self.vertex == self.graph.goal
+
+    def apply_heuristic(self):
+        # returns distance from current vertex to goal
+        return self.graph.distance_to_goal(self.vertex)
 
     def __eq__(self, other):
         # overrides inherited __eq__ method

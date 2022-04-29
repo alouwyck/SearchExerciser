@@ -2,12 +2,33 @@ from abc import ABC, abstractmethod
 from collections import UserList
 
 
+class Problem(ABC):
+
+    def __init__(self, rules):
+        # rules: list of ProductionRule objects
+        self.rules = rules
+
+    def search(self, Method, print_result=True, print_queue=False):
+        # searches path from start to goal
+        # Method is a search.base.Algorithm class: DFS, BFS, NDS, IDS, HC, GS, BS, UC, BBUC, OUC, EEUC, AS
+        # print_result: boolean, default is True
+        # print_queue: boolean, default is False
+        method = Method(self._get_initial_queue(), print_result, print_queue)
+        method.search()
+        return method.path_to_goal
+
+    @abstractmethod
+    def _get_initial_queue(self):
+        pass
+
+
 class State(ABC):
     # abstract class to represent states of a search problem
 
-    def __init__(self, rules):
-        # rules is a list of ProductionRule objects
-        self.rules = rules
+    def __init__(self, problem):
+        # problem is Problem object
+        self.problem = problem
+        self.rules = problem.rules
 
     def apply_production_rules(self):
         # applies production rules self.rules to state self

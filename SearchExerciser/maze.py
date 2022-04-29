@@ -27,16 +27,23 @@ class Position:
         return f"({self.irow}, {self.icol})"
 
 
-class Maze:
+class Maze(state_space.Problem):
     # class to define maze grid
 
     symbols = ('*', '.', '#', 'o')  # start = *, free = ., wall = #, goal = o
 
-    def __init__(self, grid):
+    def __init__(self, grid, rules=None):
         # grid is an integer array: start = 0, free = 1, wall = 2, goal = 3
         # size is the number of rows which is equal to the number of columns
+        # rules is list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
+        super().__init__([Left(), Right(), Up(), Down()] if rules is None else rules)
         self.grid = np.array(grid, dtype=int)
         self.size = self.grid.shape[0]
+
+    def _get_initial_queue(self):
+        initial_state = State(self, self.get_start_position())
+        initial_path = Path([initial_state])
+        return PathSeries([initial_path])
 
     def get_start_position(self):
         # gets start position
@@ -84,24 +91,6 @@ class Maze:
         plt.grid()
         plt.xlim([-0.5, xmax])
         plt.ylim([ymax, -0.5])
-
-    def search(self, Method, **kwargs):
-        # searches path from start to goal position
-        # Method is a search.base.Algorithm class: DFS, BFS, NDS, IDS, HC, GS, BS, UC, BBUC, OUC, EEUC, AS
-        # optional keyword arguments (kwargs) are:
-        # - rules: list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
-        # - heuristic: function, only required for HC, GS, BS, EEUC, AS
-        # - print_result: boolean, default is True
-        # - print_queue: boolean, default is False
-        if 'rules' in kwargs:
-            initial_state = State(self, self.get_start_position(), kwargs['rules'])
-            del kwargs['rules']
-        else:
-            initial_state = State(self, self.get_start_position())
-        initial_path = Path([initial_state])
-        method = Method(PathSeries([initial_path]), **kwargs)
-        method.search()
-        return method.path_to_goal
 
     def __repr__(self):
         # overrides inherited __repr__ method
@@ -212,13 +201,16 @@ class State(state_space.State):
     # class to define maze state
     # inherits from state_space.State
 
-    def __init__(self, maze, position, rules=None):
+    def __init__(self, maze, position):
         # maze is a Maze object
         # position is a Position object
         # rules is a list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
-        super().__init__([Left(), Right(), Up(), Down()] if rules is None else rules)
-        self.maze = maze
+        super().__init__(maze)
         self.position = position
+
+    @property
+    def maze(self):
+        return self.problem
 
     def is_valid_move(self, move):
         # checks if given move is valid
@@ -234,7 +226,7 @@ class State(state_space.State):
         # returns new State object
         new_position = Position(self.position.irow + move.rule.drow,
                                 self.position.icol + move.rule.dcol)
-        return State(self.maze, new_position, self.rules)  # new state
+        return State(self.maze, new_position)  # new state
 
     def is_goal(self):
         # checks if state self is a goal state
