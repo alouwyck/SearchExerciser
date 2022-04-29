@@ -130,7 +130,7 @@ class Algorithm(Base):
 
     def _add_new_paths_to_queue(self):
         # adds the new paths to the front of the queue
-        self._queue = self._queue_class(self._new_paths) + self._queue
+        self._queue = self._new_paths + self._queue
 
     def _check_goal_is_reached(self):
         # updates goal_is_reached

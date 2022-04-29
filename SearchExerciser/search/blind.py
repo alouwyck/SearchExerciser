@@ -42,7 +42,7 @@ class BFS(Algorithm):
 
     def _add_new_paths_to_queue(self):
         # adds the new paths to the BACK of the queue
-        self._queue = self._queue + self._queue_class(self._new_paths)
+        self._queue = self._queue + self._new_paths
 
 
 class NDS(Algorithm):

@@ -58,6 +58,11 @@ class Maze:
                 0 <= position.icol < self.size and
                 self.grid[position.irow, position.icol] != 2)
 
+    def distance_to_goal(self, position):
+        # returns Manhattan distance from given position to goal position
+        goal = self.get_goal_position()
+        return abs(goal.irow - position.irow) + abs(goal.icol - position.icol)
+
     def plot(self):
         # plots maze
         cmap = colors.ListedColormap(['forestgreen', 'lightyellow', 'purple', 'red'])  # colormap
@@ -80,16 +85,21 @@ class Maze:
         plt.xlim([-0.5, xmax])
         plt.ylim([ymax, -0.5])
 
-    def search(self, Method, heuristic=None, rules=None, print_result=True, print_queue=False):
+    def search(self, Method, **kwargs):
         # searches path from start to goal position
-        # Method is search.Algorithm class
-        # rules is list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
-        # print_result is boolean, default is True
-        # print_queue is boolean, default is False
-        initial_state = State(self, self.get_start_position(), rules)
+        # Method is a search.base.Algorithm class: DFS, BFS, NDS, IDS, HC, GS, BS, UC, BBUC, OUC, EEUC, AS
+        # optional keyword arguments (kwargs) are:
+        # - rules: list of ProductionRule objects, default is [Left(), Right(), Up(), Down()]
+        # - heuristic: function, only required for HC, GS, BS, EEUC, AS
+        # - print_result: boolean, default is True
+        # - print_queue: boolean, default is False
+        if 'rules' in kwargs:
+            initial_state = State(self, self.get_start_position(), kwargs['rules'])
+            del kwargs['rules']
+        else:
+            initial_state = State(self, self.get_start_position())
         initial_path = Path([initial_state])
-        method = Method(PathSeries([initial_path]), heuristic=heuristic, print_result=print_result,
-                        print_queue=print_queue)
+        method = Method(PathSeries([initial_path]), **kwargs)
         method.search()
         return method.path_to_goal
 
@@ -186,10 +196,11 @@ class Move(state_space.Move):
     # class to define a maze move
     # inherits from state_space.Move
 
-    def __init__(self, state, rule):
+    def __init__(self, state, rule, cost=1.0):
         # state is State object
         # rule is ProductionRule object
-        super().__init__(state, rule)
+        # cost is float
+        super().__init__(state, rule, cost)
 
     def __repr__(self):
         # overrides inherited __repr__ method
@@ -230,16 +241,16 @@ class State(state_space.State):
         # returns boolean
         return self.maze.get_goal_position() == self.position
 
+    def apply_heuristic(self):
+        # returns Manhattan distance from current position to goal position
+        return self.maze.distance_to_goal(self.position)
+
     def __eq__(self, other):
         # overrides inherited __eq__ method
         # checks if state self is equal to other state
         # two states are the same if their positions are the same
         # returns boolean
         return self.position == other.position
-
-    def manhattan_distance(self):
-        goal_position = self.maze.get_goal_position()
-        return abs(goal_position.irow - self.position.irow) + abs(goal_position.icol - self.position.icol)
 
     def __repr__(self):
         # overrides inherited __repr__ method
@@ -306,7 +317,3 @@ class PathSeries(state_space.PathSeries):
             return '\n'.join([''.join(row) for row in arr])
         else:
             return ""
-
-
-def manhattan_distance_heuristic(state):
-    return state.manhattan_distance()

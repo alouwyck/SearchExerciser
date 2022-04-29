@@ -35,6 +35,12 @@ class State(ABC):
         pass
 
     @abstractmethod
+    def apply_heuristic(self):
+        # apply heuristic to state self
+        # returns float
+        pass
+
+    @abstractmethod
     def __eq__(self, other):
         # overrides inherited __eq__ method
         # compares state self to other state
@@ -102,9 +108,9 @@ class Path(UserList):
         # returns boolean
         return self[-1].is_goal()  # call is_goal() method on last state
 
-    def last_state(self):
-        # returns the last state on the path
-        return self[-1]
+    def apply_heuristic(self):
+        # applies heuristic to last state in path self
+        return self[-1].apply_heuristic()
 
     def calculate_children(self):
         # generates children of last state in path self
