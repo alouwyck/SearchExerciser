@@ -59,7 +59,7 @@ class Move:
     # class that implements a move
     # a move is a production rule that is applied to a given state
 
-    def __init__(self, state, rule, cost=0):
+    def __init__(self, state, rule, cost=0.0):
         # state is a State object
         # rule is a ProductionRule object
         # cost is the cost of the move, default is 0
@@ -82,8 +82,9 @@ class Path(UserList):
     # class to implement a path
     # a path is a series of states
 
-    def __init__(self, states, cost=0):
+    def __init__(self, states, cost=0.0):
         # states is a list of State objects
+        # cost is the accumulated cost of the path (float)
         super().__init__(states)
         self.cost = cost
 
