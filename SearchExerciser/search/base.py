@@ -128,9 +128,9 @@ class Algorithm(Base):
         self._new_paths = self._queue_class([path for path in self._first_path.calculate_children()
                                              if not path.has_loop()])
 
-    @abstractmethod
     def _add_new_paths_to_queue(self):
-        pass
+        # adds the new paths to the front of the queue
+        self._queue = self._queue_class(self._new_paths) + self._queue
 
     def _check_goal_is_reached(self):
         # updates goal_is_reached

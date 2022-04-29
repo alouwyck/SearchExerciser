@@ -21,7 +21,7 @@ class DFS(Algorithm):
     def _add_new_paths_to_queue(self):
         # adds the new paths to the FRONT of the queue
         if len(self._first_path) < self.depth_limit:  # check depth_limit
-            self._queue = self._queue_class(self._new_paths) + self._queue
+            super()._add_new_paths_to_queue()
 
     def _check_goal_is_reached(self):
         if len(self._first_path) < self.depth_limit:  # check depth_limit
