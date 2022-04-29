@@ -59,10 +59,10 @@ class Move:
     # class that implements a move
     # a move is a production rule that is applied to a given state
 
-    def __init__(self, state, rule, cost=1):
+    def __init__(self, state, rule, cost=0):
         # state is a State object
         # rule is a ProductionRule object
-        # cost is the cost of the move, default is 1
+        # cost is the cost of the move, default is 0
         self.state = state
         self.rule = rule
         self.cost = cost
@@ -82,36 +82,41 @@ class Path(UserList):
     # class to implement a path
     # a path is a series of states
 
-    def __init__(self, states):
+    def __init__(self, states, cost=0):
         # states is a list of State objects
         super().__init__(states)
+        self.cost = cost
 
     def has_loop(self):
         # checks if path self contains cycles/loops
         # returns boolean
         return any([self[-1] == state for state in self[:-1]])  # checking last state is sufficient
 
+    def contains_state(self, state):
+        # checks if path self contains given state
+        return state in self
+
     def reaches_goal(self):
         # checks if path self reaches the goal state
         # returns boolean
         return self[-1].is_goal()  # call is_goal() method on last state
 
-    def calculate_children(self):
-        # generates children of last state in path self
-        # returns PathSeries object containing these child states
-        moves = self[-1].apply_production_rules()  # apply production rules on last state
-        new_paths = [self.add(move.apply()) for move in moves if move.is_valid()]  # apply moves if they are valid
-        return type(self)(new_paths)
-
     def last_state(self):
         # returns the last state on the path
         return self[-1]
 
-    def add(self, state):
-        # adds state to path self
-        # state is a State object
+    def calculate_children(self):
+        # generates children of last state in path self
+        # returns list containing these child paths
+        moves = self[-1].apply_production_rules()  # apply production rules on last state
+        return [self.__apply_move(move) for move in moves if move.is_valid()]  # apply moves if they are valid
+
+    def __apply_move(self, move):
+        # applies given move and adds resulting new state to path self
         # returns new Path object
-        return self + type(self)([state])
+        new_path = self + type(self)([move.apply()])
+        new_path.cost = self.cost + move.cost
+        return new_path
 
     def __repr__(self):
         # overrides inherited __repr__ method

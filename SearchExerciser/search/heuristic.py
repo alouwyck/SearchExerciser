@@ -48,13 +48,13 @@ class BS(HeuristicSearch):
         self.width = width
 
     def _remove_path_from_queue(self):
-        pass  # new paths are created to all children of all paths in the queue...
+        pass  # new paths are created to all children of ALL paths in the queue...
 
     def _create_new_paths(self):
         # creates new paths to all children of all paths in the queue
         # rejects the new paths with loops
         self._new_paths = self._queue_class([new_path for path in self._queue for new_path in path.calculate_children()
-                                             if not new_path.has_loop()])  # optimization: and not new_path.is_leaf()?
+                                             if not new_path.has_loop()])  # optimization: and len(new_path.calculate_children()) > 0?
 
     def _add_new_paths_to_queue(self):
         # sorts the new paths by heuristic f
