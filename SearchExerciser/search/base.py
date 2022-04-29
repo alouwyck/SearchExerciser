@@ -3,7 +3,7 @@ from copy import deepcopy
 from time import time
 
 
-class Algorithm(ABC):
+class Base(ABC):
 
     name = ""  # name of algorithm (string)
 
@@ -14,20 +14,59 @@ class Algorithm(ABC):
         self.initial_queue = initial_queue
         self.print_result = print_result
         self.print_queue = print_queue
-        self._initialize()
+        self.path_to_goal = None
+        self.goal_is_reached = False
+        self.queue_lengths = [len(self.initial_queue)]
+        self.elapsed_time = None
+        self.nr_iterations = 0
 
     def _initialize(self):
-        # initialise attributes
+        # initialize attributes
         # called by constructor and by method search
         self.path_to_goal = None
         self.goal_is_reached = False
+        self.queue_lengths = [len(self.initial_queue)]
+        self.elapsed_time = None
+        self.nr_iterations = 0
+
+    @abstractmethod
+    def search(self):
+        pass
+
+    def _print_result(self):
+        # prints result
+        # if self.print_result is True
+        if self.print_result:
+            # 3. if (goal reached) then success else failure
+            print("ALGORITHM:", self.name)
+            print("RESULT:", "SUCCES" if self.goal_is_reached else "FAILURE")
+            # print elapsed time, number of iterations, and maximum length of queue
+            print("Elapsed time:", self.elapsed_time, 'seconds')
+            print('Number of iterations:', self.nr_iterations)
+            print('Maximum length of queue:', max(self.queue_lengths))
+
+    def __repr__(self):
+        # overrides inherited __repr__ method
+        # returns string
+        return self.name
+
+
+class Algorithm(Base):
+
+    def __init__(self, initial_queue, print_result=True, print_queue=False):
+        # initial_queue is PathSeries object
+        # print_result is boolean, default is True
+        # print_queue is boolean, default is False
+        super().__init__(initial_queue, print_result, print_queue)
+
+    def _initialize(self):
+        # initialize attributes
+        # called by method search
+        super()._initialize()
         self._queue = deepcopy(self.initial_queue)
         self._queue_class = type(self.initial_queue)
         self._first_path = None
         self._new_paths = None
-        self.queue_lengths = [len(self._queue)]
-        self.elapsed_time = None
-        self.nr_iterations = 0
 
     def search(self):
         # performs the implemented search algorithm
@@ -45,6 +84,7 @@ class Algorithm(ABC):
         self.goal_is_reached = self._queue[0].reaches_goal()
         if self.goal_is_reached:
             self.path_to_goal = self._queue[0]
+
         while self._queue and not self.goal_is_reached:
 
             # augment number of iterations
@@ -128,20 +168,3 @@ class Algorithm(ABC):
             print("Path to goal found in new paths:")
             print(self.path_to_goal)
             print()
-
-    def _print_result(self):
-        # prints result
-        # if self.print_result is True
-        if self.print_result:
-            # 3. if (goal reached) then success else failure
-            print("ALGORITHM:", self.name)
-            print("RESULT:", "SUCCES" if self.goal_is_reached else "FAILURE")
-            # print elapsed time, number of iterations, and maximum length of queue
-            print("Elapsed time:", self.elapsed_time, 'seconds')
-            print('Number of iterations:', self.nr_iterations)
-            print('Maximum length of queue:', max(self.queue_lengths))
-
-    def __repr__(self):
-        # overrides inherited __repr__ method
-        # returns string
-        return self.name
