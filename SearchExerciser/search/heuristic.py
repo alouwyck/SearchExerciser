@@ -19,7 +19,7 @@ class HC(HeuristicSearch):
     def _add_new_paths_to_queue(self):
         # sorts the new paths using heuristic f
         # adds the sorted new paths to the front of the queue
-        self._new_paths = sorted(self._new_paths, key=lambda path: self.heuristic(path.last_state()))
+        self._new_paths = self._queue_class(sorted(self._new_paths, key=lambda path: self.heuristic(path.last_state())))
         super()._add_new_paths_to_queue()
 
 
@@ -35,7 +35,7 @@ class GS(HeuristicSearch):
         # adds the new paths to the front of the queue
         # sorts the entire queue using heuristic f
         super()._add_new_paths_to_queue()
-        self._queue = sorted(self._queue, key=lambda path: self.heuristic(path.last_state()))
+        self._queue = self._queue_class(sorted(self._queue, key=lambda path: self.heuristic(path.last_state())))
 
 
 class BS(HeuristicSearch):
@@ -59,7 +59,7 @@ class BS(HeuristicSearch):
     def _add_new_paths_to_queue(self):
         # sorts the new paths by heuristic f
         # adds the width best new paths to the queue
-        self._new_paths = sorted(self._new_paths, key=lambda path: self.heuristic(path.last_state()))
+        self._new_paths = self._queue_class(sorted(self._new_paths, key=lambda path: self.heuristic(path.last_state())))
         if len(self._new_paths) > self.width:
             self._new_paths = self._new_paths[:self.width]
         self._queue = self._new_paths
