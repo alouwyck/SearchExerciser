@@ -60,12 +60,6 @@ class BS(HeuristicSearch):
         # sorts the new paths by heuristic f
         # adds the width best new paths to the queue
         self._new_paths = sorted(self._new_paths, key=lambda path: self.heuristic(path.last_state()))
-        self._queue = self._queue_class(self._new_paths[:self.width])
-
-    def _check_goal_is_reached(self):
-        # updates goal_is_reached
-        for path in self._queue:
-            if path.reaches_goal():
-                self.goal_is_reached = True
-                self.path_to_goal = path
-                break
+        if len(self._new_paths) > self.width:
+            self._new_paths = self._new_paths[:self.width]
+        self._queue = self._new_paths
