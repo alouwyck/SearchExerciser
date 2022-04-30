@@ -75,7 +75,7 @@ class EEUC(OUC):
         # adds the new paths to the front of the queue
         # sorts the entire queue by f-value (= accumulated cost + heuristic h)
         Algorithm._add_new_paths_to_queue(self)
-        self._queue = self._queue_class(sorted(self._queue, key=lambda path: path.apply_heurisic() + path.cost))
+        self._queue = self._queue_class(sorted(self._queue, key=lambda path: path.apply_heuristic() + path.cost))
 
 
 class AS(EEUC):
