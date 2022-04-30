@@ -3,6 +3,9 @@
 # May 2022
 from . import state_space
 import networkx as nx
+import string
+from itertools import combinations
+from random import shuffle, randint
 
 
 class Graph(state_space.Problem):
@@ -50,11 +53,14 @@ class Graph(state_space.Problem):
         else:
             return 1.0
 
-    def plot(self, positions):
+    def plot(self, positions=None):
         # plots graph
         # positions is a dictionary {node: [x, y]} where [x, y] is the node coordinate
+        #   if positions is not given, the networkx.spring_layout is used
+        if positions is None:
+            positions = nx.spring_layout(self.graph)
         heuristic = nx.get_node_attributes(self.graph, "h")
-        if heuristic:  # h toevoegen aan de node labels
+        if heuristic:  # add heuristic value h to node labels
             labels = {node: str(node) + "\n" + str(h) for node, h in heuristic.items()}
         else:
             labels = {node: str(node) for node in self.graph.nodes}
@@ -82,6 +88,42 @@ class Graph(state_space.Problem):
             for node, h in heuristic.items():
                 graph.nodes[node]["h"] = h
         return Graph(graph, start, goal)
+
+    @staticmethod
+    def create_random(num_of_nodes=None, max_num_of_edges=3):
+        # creates random Graph object
+        # the created graph consists of layers
+        #   where the first layer consists of start node 'S'
+        #   and the last layer contains the goal node 'G'
+        # the total number of layers is len(num_of_nodes) + 2
+        # where num_of_nodes is a list
+        #   with num_of_nodes[i] the number of nodes in intermediate layer i
+        #   default is [3, 4, 3]
+        # max_num_of_edges is the maximum of number of edges between two layers
+        if num_of_nodes is None:
+            num_of_nodes = [3, 4, 3]
+        a = list(string.ascii_uppercase)
+        a.remove('S')
+        a.remove('G')
+        a = a[:sum(num_of_nodes)]
+        a += ['G']
+        h = 10 * (len(num_of_nodes) + 1)
+        num_of_nodes += [1]
+        edges = []
+        layer1 = {"S"}
+        heuristic = dict(S=h)
+        for i in num_of_nodes:
+            layer2 = set(a[:i])
+            a = a[i:]
+            h -= 10
+            new_edges = [edge for edge in combinations(layer1.union(layer2), 2)]
+            shuffle(new_edges)
+            new_edges = new_edges[:max_num_of_edges]
+            layer1 = {node for edge in new_edges for node in edge if node in layer2}
+            heuristic.update({node: h for node in layer1})
+            new_edges = [[node1, node2, randint(5, 10)] for node1, node2 in new_edges]
+            edges += new_edges
+        return Graph.create(edges, heuristic=heuristic)
 
 
 class ProductionRule(state_space.ProductionRule):
