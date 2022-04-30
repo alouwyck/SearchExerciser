@@ -20,6 +20,13 @@ class UC(Algorithm):
         super()._add_new_paths_to_queue()
         self._queue = self._queue_class(sorted(self._queue, key=lambda path: path.cost))
 
+    def _print_result(self):
+        # prints result
+        # if self.print_result is True
+        if self.print_result:
+            super()._print_result()
+            print('Accumulated cost of path to goal:', self.path_to_goal.cost)
+
 
 class OUC(UC):
     # class that implements optimal uniform cost
