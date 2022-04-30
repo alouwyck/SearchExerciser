@@ -1,5 +1,14 @@
 # SearchExerciser
 
-Python package om blind search algoritmen in te oefenen mbv eenvoudige doolhof- en grafeproblemen. Check de notebook voor uitleg en voorbeelden.
+Python package to exercise search algorithms.
 
-Blind search behoort tot de leerstof van het vak Introduction to Artificial Intelligence dat onderdeel uitmaakt van de opleiding Toegepaste Informatica aan Hogeschool Vives (Kortrijk). In het academiejaar 2021-'22 wordt het vak gegeven door Stefaan Haspeslagh, Pieter Ideler en Andy Louwyck.
+The following algorithms are implemented to solve maze and graph search problems:
+- blind search: depth-first, breadth-first, non-deterministic, and iterative deepening;
+- heuristic search: hill climbing, greedy, and beam search;
+- optimal search: uniform cost, optimal uniform cost, optimal uniform cost with branch-and-bound, estimate-extended uniform cost, and A*.
+
+Check the notebooks for examples.
+
+Required packages: NumPy, MatplotLib, Networkx, IPython
+
+SearchExerciser is developed by Stefaan Haspeslagh and Andy Louwyck at Vives University of Applied Sciences (Kortrijk, Belgium).

@@ -1,3 +1,6 @@
+# SearchExerciser is developed by Stefaan Haspeslagh and Andy Louwyck
+# at Vives University of Applied Sciences, Kortrijk, Belgium.
+# May 2022
 from . import state_space
 import numpy as np
 import matplotlib.pyplot as plt

@@ -1,3 +1,6 @@
+# SearchExerciser is developed by Stefaan Haspeslagh and Andy Louwyck
+# at Vives University of Applied Sciences, Kortrijk, Belgium.
+# May 2022
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from time import time
