@@ -208,6 +208,17 @@ class PathSeries(state_space.PathSeries):
         # paths is a list of Path objects
         super().__init__(paths)
 
+    def string_to_print(self, attr=None, ndigits=1):
+        # overrides inherited string_to_print method
+        # returns string to print when printing queue of search algorithm
+        # attr is None, 'h', 'c', of 'f'
+        #  'h': add heuristic to string
+        #  'c': add cost to string
+        #  'f': add f-value to string
+        # ndigits is the number of decimal places
+        paths = ",".join([path.string_to_print(attr, ndigits) for path in self])
+        return f"[{paths}]"
+
     def __repr__(self):
         # overrides inherited __repr__ method
         # returns string

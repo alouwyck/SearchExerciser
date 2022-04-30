@@ -1,10 +1,18 @@
 # SearchExerciser is developed by Stefaan Haspeslagh and Andy Louwyck
 # at Vives University of Applied Sciences, Kortrijk, Belgium.
 # May 2022
-from .base import Algorithm
+from .base import SearchAlgorithm
 
 
-class HC(Algorithm):
+class HeuristicSearchAlgorithm(SearchAlgorithm):
+    # superclass for heuristic search algorithms
+
+    def __init__(self, initial_queue, print_result=True, print_queue=False):
+        super().__init__(initial_queue, print_result, print_queue)
+        self._print_options = dict(attr='h', ndigits=1)  # also print heuristic h
+
+
+class HC(HeuristicSearchAlgorithm):
     # class that implements hill climbing
 
     name = 'Hill Climbing'
@@ -19,7 +27,7 @@ class HC(Algorithm):
         super()._add_new_paths_to_queue()
 
 
-class GS(Algorithm):
+class GS(HeuristicSearchAlgorithm):
     # class that implements greedy search
 
     name = "Greedy search"
@@ -34,7 +42,7 @@ class GS(Algorithm):
         self._queue = self._queue_class(sorted(self._queue, key=lambda path: path.apply_heuristic()))
 
 
-class BS(Algorithm):
+class BS(HeuristicSearchAlgorithm):
     # class that implements beam search
 
     name = "Beam search"
@@ -59,3 +67,16 @@ class BS(Algorithm):
         if len(self._new_paths) > self.width:
             self._new_paths = self._new_paths[:self.width]
         self._queue = self._new_paths
+
+    def _print_queue(self):
+        # prints queue
+        # if self.print_queue is True
+        if self.print_queue:
+            print(f"Iteration {self.nr_iterations}")
+            print("All paths removed from queue.")
+            print("New paths:")
+            print(self._new_paths.string_to_print(**self._print_options))
+            print("Paths in queue:")
+            print(self._queue.string_to_print(**self._print_options))
+            print()
+

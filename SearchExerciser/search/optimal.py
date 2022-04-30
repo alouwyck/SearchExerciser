@@ -1,18 +1,19 @@
 # SearchExerciser is developed by Stefaan Haspeslagh and Andy Louwyck
 # at Vives University of Applied Sciences, Kortrijk, Belgium.
 # May 2022
-from .base import Algorithm
+from .base import SearchAlgorithm
 import numpy as np
 from itertools import permutations
 
 
-class UC(Algorithm):
+class UC(SearchAlgorithm):
     # class that implements uniform cost
 
     name = "Uniform cost"
 
     def __init__(self, initial_queue, print_result=True, print_queue=False):
         super().__init__(initial_queue, print_result, print_queue)
+        self._print_options = dict(attr='c', ndigits=1)  # also print cost c
 
     def _add_new_paths_to_queue(self):
         # adds the new paths to the front of the queue
@@ -77,11 +78,12 @@ class EEUC(OUC):
 
     def __init__(self, initial_queue, print_result=True, print_queue=False):
         super().__init__(initial_queue, print_result, print_queue)
+        self._print_options = dict(attr='f', ndigits=1)  # also print f-value
 
     def _add_new_paths_to_queue(self):
         # adds the new paths to the front of the queue
         # sorts the entire queue by f-value (= accumulated cost + heuristic h)
-        Algorithm._add_new_paths_to_queue(self)
+        SearchAlgorithm._add_new_paths_to_queue(self)
         self._queue = self._queue_class(sorted(self._queue, key=lambda path: path.apply_heuristic() + path.cost))
 
 

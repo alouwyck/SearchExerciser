@@ -150,6 +150,24 @@ class Path(UserList):
         new_path.cost = self.cost + move.cost
         return new_path
 
+    def string_to_print(self, attr=None, ndigits=1):
+        # returns string to print when printing queue of search algorithm
+        # attr is None, 'h', 'c', of 'f'
+        #  'h': add heuristic to string
+        #  'c': add cost to string
+        #  'f': add f-value to string
+        # ndigits is the number of decimal places
+        if attr is None:
+            return str(self)
+        else:
+            if attr == 'h':
+                value = self.apply_heuristic()
+            elif attr == 'c':
+                value = self.cost
+            elif attr == 'f':
+                value = self.cost + self.apply_heuristic()
+            return f"{self}({value:.{ndigits}f})"
+
     def __repr__(self):
         # overrides inherited __repr__ method
         # returns string
@@ -165,7 +183,22 @@ class PathSeries(UserList):
         # paths is list of Path objects
         super().__init__(paths)
 
+    def string_to_print(self, attr=None, ndigits=1):
+        # returns string to print when printing queue of search algorithm
+        # attr is None, 'h', 'c', of 'f'
+        #  'h': add heuristic to string
+        #  'c': add cost to string
+        #  'f': add f-value to string
+        # ndigits is the number of decimal places
+        if len(self) > 0:
+            return "\n".join([path.string_to_print(attr, ndigits) for path in self])
+        else:
+            return ""
+
     def __repr__(self):
         # overrides inherited __repr__ method
         # returns string
-        return "\n".join([str(path) for path in self])
+        if len(self) > 0:
+            return "\n".join([str(path) for path in self])
+        else:
+            return ""

@@ -292,6 +292,11 @@ class Path(state_space.Path):
             clear_output()
         self.plot()
 
+    def string_to_print(self, attr=None, ndigits=1):
+        # overrides inherited string_to_print method
+        # returns string to print when printing queue of search algorithm
+        return str(self)
+
     def __repr__(self):
         # overrides inherited __repr__ method
         # returns string
@@ -308,6 +313,11 @@ class PathSeries(state_space.PathSeries):
     def __init__(self, paths):
         # paths is list of Path objects
         super().__init__(paths)
+
+    def string_to_print(self, attr=None, ndigits=1):
+        # overrides inherited string_to_print method
+        # returns string to print when printing queue of search algorithm
+        return str(self)
 
     def __repr__(self):
         # overrides inherited __repr__ method

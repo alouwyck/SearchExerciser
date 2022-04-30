@@ -6,7 +6,7 @@ from copy import deepcopy
 from time import time
 
 
-class Base(ABC):
+class Algorithm(ABC):
 
     name = ""  # name of algorithm (string)
 
@@ -54,13 +54,14 @@ class Base(ABC):
         return self.name
 
 
-class Algorithm(Base):
+class SearchAlgorithm(Algorithm):
 
     def __init__(self, initial_queue, print_result=True, print_queue=False):
         # initial_queue is PathSeries object
         # print_result is boolean, default is True
         # print_queue is boolean, default is False
         super().__init__(initial_queue, print_result, print_queue)
+        self._print_options = dict(attr=None, ndigits=1)  # print no attribute
 
     def _initialize(self):
         # initialize attributes
@@ -148,7 +149,7 @@ class Algorithm(Base):
         # if self.print_queue is True
         if self.print_queue:
             print("Initial queue:")
-            print(self._queue)
+            print(self._queue.string_to_print(**self._print_options))
             print()
 
     def _print_queue(self):
@@ -157,11 +158,11 @@ class Algorithm(Base):
         if self.print_queue:
             print(f"Iteration {self.nr_iterations}")
             print("Path removed from queue:")
-            print(self._first_path)
+            print(self._first_path.string_to_print(**self._print_options))
             print("New paths:")
-            print(self._new_paths)
+            print(self._new_paths.string_to_print(**self._print_options))
             print("Paths in queue:")
-            print(self._queue)
+            print(self._queue.string_to_print(**self._print_options))
             print()
 
     def _print_path_to_goal(self):
@@ -169,5 +170,5 @@ class Algorithm(Base):
         # if self.print_result is True and path to goal if found
         if self.print_queue and self.path_to_goal is not None:
             print("Path to goal found in new paths:")
-            print(self.path_to_goal)
+            print(self.path_to_goal.string_to_print(**self._print_options))
             print()

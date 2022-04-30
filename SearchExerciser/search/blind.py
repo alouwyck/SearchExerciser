@@ -1,13 +1,13 @@
 # SearchExerciser is developed by Stefaan Haspeslagh and Andy Louwyck
 # at Vives University of Applied Sciences, Kortrijk, Belgium.
 # May 2022
-from .base import Base, Algorithm
+from .base import Algorithm, SearchAlgorithm
 from time import time
 import numpy as np
 from random import randint
 
 
-class DFS(Algorithm):
+class DFS(SearchAlgorithm):
     # class that implements depth-first search
 
     name = "Depth-first search"
@@ -35,7 +35,7 @@ class DFS(Algorithm):
             super()._print_queue()
 
 
-class BFS(Algorithm):
+class BFS(SearchAlgorithm):
     # class that implements breadth-first search
 
     name = "Breadth-first search"
@@ -48,7 +48,7 @@ class BFS(Algorithm):
         self._queue = self._queue + self._new_paths
 
 
-class NDS(Algorithm):
+class NDS(SearchAlgorithm):
     # class that implements non-deterministic search
 
     name = "Non-deterministic search"
@@ -64,7 +64,7 @@ class NDS(Algorithm):
             self._queue.insert(index, path)
 
 
-class IDS(Base):
+class IDS(Algorithm):
     # class that implements iterative deepening search
 
     name = "Iterative deepening search"
