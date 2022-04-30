@@ -114,7 +114,6 @@ class ProductionRule(state_space.ProductionRule):
         # assign this function to parameter key, which is None by default
         # check built-in function "sorted" for more information about parameters "reverse" and "key"
         try:
-            print(graph.nodes)
             vertices = sorted(graph.nodes, reverse=reverse, key=key)
         except AttributeError:
             vertices = sorted(graph.edges, reverse=reverse, key=key)
