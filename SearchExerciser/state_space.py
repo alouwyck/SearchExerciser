@@ -10,7 +10,7 @@ class Problem(ABC):
 
     def search(self, Method, print_result=True, print_queue=False):
         # searches path from start to goal
-        # Method is a search.base.Algorithm class: DFS, BFS, NDS, IDS, HC, GS, BS, UC, BBUC, OUC, EEUC, AS
+        # Method is a search.base.Algorithm class: DFS, BFS, NDS, IDS, HC, GS, BS, UC, OUC, BBUC, EEUC, AS
         # print_result: boolean, default is True
         # print_queue: boolean, default is False
         method = Method(self._get_initial_queue(), print_result, print_queue)
