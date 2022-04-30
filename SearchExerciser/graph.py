@@ -68,7 +68,7 @@ class Graph(state_space.Problem):
         # goal is the goal node (default "G")
         # heuristic is dict {node=h} with heuristic values, default is None
         graph = nx.Graph()
-        for node in {node for edge in edges for node in edge}:
+        for node in {node for edge in edges for node in edge[:2]}:
             graph.add_node(node)
         for edge in edges:
             graph.add_edge(edge[0], edge[1], cost=0 if len(edge) == 2 else edge[-1])
@@ -111,6 +111,7 @@ class ProductionRule(state_space.ProductionRule):
         # assign this function to parameter key, which is None by default
         # check built-in function "sorted" for more information about parameters "reverse" and "key"
         try:
+            print(graph.nodes)
             vertices = sorted(graph.nodes, reverse=reverse, key=key)
         except AttributeError:
             vertices = sorted(graph.edges, reverse=reverse, key=key)
