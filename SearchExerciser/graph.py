@@ -5,7 +5,7 @@ from . import state_space
 import networkx as nx
 import string
 from itertools import combinations
-from random import shuffle, randint
+import random
 
 
 class Graph(state_space.Problem):
@@ -90,7 +90,7 @@ class Graph(state_space.Problem):
         return Graph(graph, start, goal)
 
     @staticmethod
-    def create_random(num_of_nodes=None, max_num_of_edges=3):
+    def create_random(num_of_nodes=None, max_num_of_edges=3, seed=None):
         # creates random Graph object
         # the created graph consists of layers
         #   where the first layer consists of start node 'S'
@@ -100,8 +100,11 @@ class Graph(state_space.Problem):
         #   with num_of_nodes[i] the number of nodes in intermediate layer i
         #   default is [3, 4, 3]
         # max_num_of_edges is the maximum of number of edges between two layers
+        # if seed is given, it is used to set seed for random module (int)
         if num_of_nodes is None:
             num_of_nodes = [3, 4, 3]
+        if seed is not None:
+            random.seed(seed)
         a = list(string.ascii_uppercase)
         a.remove('S')
         a.remove('G')
@@ -117,11 +120,11 @@ class Graph(state_space.Problem):
             a = a[i:]
             h -= 10
             new_edges = [edge for edge in combinations(layer1.union(layer2), 2)]
-            shuffle(new_edges)
+            random.shuffle(new_edges)
             new_edges = new_edges[:max_num_of_edges]
             layer1 = {node for edge in new_edges for node in edge if node in layer2}
             heuristic.update({node: h for node in layer1})
-            new_edges = [[node1, node2, randint(5, 10)] for node1, node2 in new_edges]
+            new_edges = [[node1, node2, random.randint(5, 10)] for node1, node2 in new_edges]
             edges += new_edges
         return Graph.create(edges, heuristic=heuristic)
 
