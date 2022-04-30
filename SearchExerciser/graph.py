@@ -71,7 +71,10 @@ class Graph(state_space.Problem):
         for node in {node for edge in edges for node in edge[:2]}:
             graph.add_node(node)
         for edge in edges:
-            graph.add_edge(edge[0], edge[1], cost=0 if len(edge) == 2 else edge[-1])
+            if len(edge) == 2:
+                graph.add_edge(edge[0], edge[1])
+            else:
+                graph.add_edge(edge[0], edge[1], cost=edge[-1])
         if heuristic is not None:
             for node, h in heuristic.items():
                 graph.nodes[node]["h"] = h
