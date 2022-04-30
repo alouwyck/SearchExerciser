@@ -98,5 +98,5 @@ class AS(EEUC):
         # sorts the entire queue by f-value (= accumulated cost + heuristic h)
         # deletes redundant paths
         super()._add_new_paths_to_queue()
-        self._queue = self._queue_class([p for p, q in permutations(self._queue, 2)
-                                         if not q.contains_state(p[-1]) or p.cost < q.cost])
+        to_remove = [p for p, q in permutations(self._queue, 2) if q.contains_state(p[-1]) and p.cost >= q.cost]
+        self._queue = self._queue_class([path for path in self._queue if path not in to_remove])
