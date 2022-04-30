@@ -73,16 +73,17 @@ class State(ABC):
         pass
 
 
-class ProductionRule:
+class ProductionRule(ABC):
     # class that implements a production rule
     # a production rule is an action that can be applied on the states in general
     # a production is therefore independent of a state
 
+    @abstractmethod
     def apply(self, state):
         # applies production rule self to given state
         # state is a State object
         # returns Move object
-        return Move(state, self)
+        pass
 
 
 class Move:

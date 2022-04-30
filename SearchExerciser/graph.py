@@ -93,6 +93,13 @@ class ProductionRule(state_space.ProductionRule):
         # returns string with the name of the next vertex
         return str(self.next_vertex)
 
+    def apply(self, state):
+        # applies production rule self to given state
+        # state is a State object
+        # returns Move object
+        edge = (state.vertex, self.next_vertex)
+        return Move(state, self, state.graph.get_cost(edge))
+
     @staticmethod
     def create_all(graph, reverse=False, key=None):
         # creates all possible production rules for a given graph
@@ -114,11 +121,10 @@ class Move(state_space.Move):
     # class to define a graph move
     # inherits from state_space.Move
 
-    def __init__(self, state, rule):
+    def __init__(self, state, rule, cost=0.0):
         # state is a State object
         # rule is a ProductionRule object
-        edge = state.graph.edges[(state.vertex, rule.next_vertex)]  # cost is a graph edge attribute
-        super().__init__(state, rule, edge["cost"] if "cost" in edge else 0.0)
+        super().__init__(state, rule, cost)
 
     def __repr__(self):
         # overrides inherited __repr__ method
@@ -178,9 +184,9 @@ class Path(state_space.Path):
     # class to define path in graph
     # inherits from state_space.Path
 
-    def __init__(self, states):
+    def __init__(self, states, cost=0.0):
         # states is a list of State objects
-        super().__init__(states)
+        super().__init__(states, cost)
 
     def __repr__(self):
         # overrides inherited __repr__ method

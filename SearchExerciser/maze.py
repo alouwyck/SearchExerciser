@@ -151,6 +151,12 @@ class ProductionRule(state_space.ProductionRule):
         if self.drow == 1:
             return 'D'
 
+    def apply(self, state):
+        # applies production rule self to given state
+        # state is a State object
+        # returns Move object
+        return Move(state, self, cost=1.0)
+
 
 class Left(ProductionRule):
     # subclass that defines maze production rule 'left'
@@ -188,7 +194,7 @@ class Move(state_space.Move):
     # class to define a maze move
     # inherits from state_space.Move
 
-    def __init__(self, state, rule, cost=1.0):
+    def __init__(self, state, rule, cost=0.0):
         # state is State object
         # rule is ProductionRule object
         # cost is float
@@ -257,9 +263,9 @@ class Path(state_space.Path):
     # class to define maze path
     # inherits from state_space.Path
 
-    def __init__(self, states):
+    def __init__(self, states, cost=0.0):
         # states is list of State objects
-        super().__init__(states)
+        super().__init__(states, cost)
 
     def plot(self):
         # plots path in maze
