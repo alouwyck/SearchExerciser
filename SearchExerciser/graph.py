@@ -11,7 +11,7 @@ class Graph(state_space.Problem):
 
     def __init__(self, graph, start="S", goal="G", rules=None):
         # graph is a networkx.Graph object
-        #  add heurstic value as node attribute "h"
+        #  add heuristic value as node attribute "h"
         #  add cost as edge attribute "cost"
         # start is the start node (default "S")
         # goal is the goal node (default "G")
@@ -45,7 +45,10 @@ class Graph(state_space.Problem):
     def get_cost(self, edge):
         # returns the cost of given edge (tuple)
         # which is the edge's attribute "cost"
-        return self.graph.edges[edge]['cost']
+        if edge[1] in self.graph.neighbors(edge[0]) and 'cost' in self.graph[edge[0]][edge[1]]:
+            return self.graph[edge[0]][edge[1]]['cost']
+        else:
+            return 1.0
 
     def plot(self, positions):
         # plots graph
@@ -116,7 +119,7 @@ class ProductionRule(state_space.ProductionRule):
         try:
             vertices = sorted(graph.nodes, reverse=reverse, key=key)
         except AttributeError:
-            vertices = sorted(graph.edges, reverse=reverse, key=key)
+            vertices = sorted(graph.vertices, reverse=reverse, key=key)
         return [ProductionRule(vertex) for vertex in vertices]
 
 
@@ -153,7 +156,7 @@ class State(state_space.State):
         # checks if move is valid
         # move is Move object
         # returns boolean
-        return any([self.vertex in edge and move.rule.next_vertex in edge for edge in self.graph.edges])
+        return move.rule.next_vertex in self.problem.graph.neighbors(self.vertex)
 
     def apply_move(self, move):
         # applies move to state self to get new state
