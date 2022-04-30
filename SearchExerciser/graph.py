@@ -90,7 +90,7 @@ class Graph(state_space.Problem):
         return Graph(graph, start, goal)
 
     @staticmethod
-    def create_random(num_of_nodes=None, max_num_of_edges=3, seed=None):
+    def create_random(num_of_nodes=None, max_num_of_edges=3, min_cost=5, max_cost=10, seed=None):
         # creates random Graph object
         # the created graph consists of layers
         #   where the first layer consists of start node 'S'
@@ -100,6 +100,9 @@ class Graph(state_space.Problem):
         #   with num_of_nodes[i] the number of nodes in intermediate layer i
         #   default is [3, 4, 3]
         # max_num_of_edges is the maximum of number of edges between two layers
+        # for each edge a random cost is generated between min_cost and max_cost
+        #   default is between 5 and 10
+        #   min_cost and max_cost must be positive integers
         # if seed is given, it is used to set seed for random module (int)
         if num_of_nodes is None:
             num_of_nodes = [3, 4, 3]
@@ -110,7 +113,7 @@ class Graph(state_space.Problem):
         a.remove('G')
         a = a[:sum(num_of_nodes)]
         a += ['G']
-        h = 10 * (len(num_of_nodes) + 1)
+        h = max_cost * (len(num_of_nodes) + 1)
         num_of_nodes += [1]
         edges = []
         layer1 = {"S"}
@@ -118,13 +121,13 @@ class Graph(state_space.Problem):
         for i in num_of_nodes:
             layer2 = set(a[:i])
             a = a[i:]
-            h -= 10
+            h -= max_cost
             new_edges = [edge for edge in combinations(layer1.union(layer2), 2)]
             random.shuffle(new_edges)
             new_edges = new_edges[:max_num_of_edges]
             layer1 = {node for edge in new_edges for node in edge if node in layer2}
             heuristic.update({node: h for node in layer1})
-            new_edges = [[node1, node2, random.randint(5, 10)] for node1, node2 in new_edges]
+            new_edges = [[node1, node2, random.randint(min_cost, max_cost)] for node1, node2 in new_edges]
             edges += new_edges
         return Graph.create(edges, heuristic=heuristic)
 
