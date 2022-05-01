@@ -11,12 +11,14 @@ class Problem(ABC):
         # rules: list of ProductionRule objects
         self.rules = rules
 
-    def search(self, Method, print_result=True, print_queue=False):
+    def search(self, Method, **kwargs):
         # searches path from start to goal
         # Method is a search.base.Algorithm class: DFS, BFS, NDS, IDS, HC, GS, BS, UC, OUC, BBUC, EEUC, AS
-        # print_result: boolean, default is True
-        # print_queue: boolean, default is False
-        method = Method(self._get_initial_queue(), print_result, print_queue)
+        # kwargs:
+        # - print_result: boolean, default is True
+        # - print_queue: boolean, default is False
+        # - extra parameters to instantiate Method (e.g. width in case of beam search BS)
+        method = Method(self._get_initial_queue(), **kwargs)
         method.search()
         return method.path_to_goal
 
