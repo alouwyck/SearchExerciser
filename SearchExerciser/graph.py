@@ -122,13 +122,15 @@ class Graph(state_space.Problem):
         edges = []
         layer1 = {"S"}
         heuristic = dict(S=h)
-        for i in num_of_nodes:
-            layer2 = set(a[:i])
-            a = a[i:]
+        for i, n in enumerate(num_of_nodes):
+            layer2 = set(a[:n])
+            a = a[n:]
             h -= max_cost
             new_edges = [edge for edge in combinations(layer1.union(layer2), 2)]
             random.shuffle(new_edges)
             new_edges = new_edges[:max_num_of_edges]
+            if i == 0 and 'S' not in {node for edge in new_edges for node in edge}:
+                new_edges.append(('S', random.choice(new_edges)[0]))
             layer1 = {node for edge in new_edges for node in edge if node in layer2}
             heuristic.update({node: h for node in layer1})
             new_edges = [[node1, node2, random.randint(min_cost, max_cost)] for node1, node2 in new_edges]
