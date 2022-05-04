@@ -39,7 +39,7 @@ class OUC(UC):
 
     def _check_goal_is_reached(self):
         # updates goal_is_reached
-        if self._queue[0].reaches_goal():  # only checks first path in queue!
+        if self._queue and self._queue[0].reaches_goal():  # only checks first path in queue!
             self.goal_is_reached = True
             self.path_to_goal = self._queue[0]
 
