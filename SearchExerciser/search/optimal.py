@@ -26,7 +26,8 @@ class UC(SearchAlgorithm):
         # if self.print_result is True
         if self.print_result:
             super()._print_result()
-            print('Accumulated cost of path to goal:', self.path_to_goal.cost)
+            if self.path_to_goal is not None:
+                print('Accumulated cost of path to goal:', self.path_to_goal.cost)
 
 
 class OUC(UC):
