@@ -2,9 +2,10 @@
 # at Vives University of Applied Sciences, Kortrijk, Belgium.
 # May 2022
 from . import state_space
+import numpy as np
 import networkx as nx
 import string
-from itertools import combinations
+from itertools import combinations, product
 import random
 
 
@@ -111,7 +112,10 @@ class Graph(state_space.Problem):
         a = list(string.ascii_uppercase)
         a.remove('S')
         a.remove('G')
-        a = a[:sum(num_of_nodes)]
+        n = sum(num_of_nodes)
+        m = int(np.ceil(np.log(n) / np.log(len(a))))
+        a = [''.join(letters) for letters in product(*([a] * m))]
+        a = a[:n]
         a += ['G']
         h = max_cost * (len(num_of_nodes) + 1)
         num_of_nodes += [1]
